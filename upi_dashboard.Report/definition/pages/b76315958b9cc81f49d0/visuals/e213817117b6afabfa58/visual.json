@@ -1,0 +1,36 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "e213817117b6afabfa58",
+  "position": {
+    "x": 40,
+    "y": 100,
+    "z": 1,
+    "height": 50,
+    "width": 1800,
+    "tabOrder": 1
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "PhonePe and Google Pay have handled 77-87% of UPI volume every month since 2020. Their combined share peaked at 86.8% in May 2024 and is now back to early-2021 levels.",
+                    "textStyle": {
+                      "fontSize": "13pt",
+                      "color": "#605E5C"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

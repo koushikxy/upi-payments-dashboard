@@ -1,0 +1,36 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "8533789fc907d96b3e7c",
+  "position": {
+    "x": 40,
+    "y": 100,
+    "z": 1,
+    "height": 50,
+    "width": 1800,
+    "tabOrder": 1
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Paytm went from 12.7% to 7.0% of volume in 2024 after the RBI restricted Paytm Payments Bank. Since mid-2024, newer apps like Navi have been taking share from the top two.",
+                    "textStyle": {
+                      "fontSize": "13pt",
+                      "color": "#605E5C"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
