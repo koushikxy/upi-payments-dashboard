@@ -56,3 +56,7 @@ There is one fact table (`upi_apps`: month, app, volume, value) and a monthly `C
 To refresh it on your machine, change the `DataFolder` parameter (Transform data → Manage parameters) to wherever the `data` folder is, then click Refresh.
 
 Tools: Power BI Desktop, Power Query (M), DAX
+
+---
+
+Koushik Maity · [LinkedIn](https://www.linkedin.com/in/ksmaity/) · [GitHub](https://github.com/koushikxy) · [Portfolio](https://koushikmaity.netlify.app/)
