@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "upi_dashboard"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "c0142f2c-4349-46ff-9163-72b67eff0f44"
+  }
+}

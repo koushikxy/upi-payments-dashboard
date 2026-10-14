@@ -1,0 +1,42 @@
+expression DataFolder = "C:\Users\ASUS\OneDrive\Desktop\upi-payments-dashboard\data" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: c1e6264d-e9e5-46cc-be24-25500e43a764
+
+	annotation PBI_ResultType = Text
+
+expression fnReadMonth =
+		(content as binary) as table =>
+		let
+		    sheet = Excel.Workbook(content, null, true){0}[Data],
+		    allRows = Table.SelectRows(sheet, each (try Number.From([Column1]) otherwise 0) > 0),
+		    cols = Table.ColumnNames(allRows),
+		    used = List.Select(List.Positions(cols), (i) => List.NonNullCount(Table.Column(allRows, cols{i})) > 0),
+		    rows = Table.SelectColumns(allRows, List.FirstN(cols, List.Max(used) + 1)),
+		    n = Table.ColumnCount(rows),
+		    toNum = (v) => if v is number then v else try Number.From(Text.Remove(Text.From(v), ","), "en-US") otherwise null,
+		    parse = (r) =>
+		        let
+		            vals = List.Transform(Record.FieldValues(r), toNum),
+		            total = vals{n - 1},
+		            parts = if n > 4 then List.Alternate(List.Range(vals, 3, n - 5), 1, 1, 1) else {}
+		        in
+		            [
+		                raw_name = Text.Trim(Text.Remove(Text.From(r[Column2]), {"#", "*"})),
+		                volume_mn = vals{n - 2},
+		                value_cr = if total <> null then total else if vals{3} = null then null else List.Sum(List.RemoveNulls(parts))
+		            ]
+		in
+		    Table.FromRecords(List.Transform(Table.ToRecords(rows), parse))
+	lineageTag: d931f328-cb56-42f8-ba2f-bcafa32c7d03
+
+	annotation PBI_ResultType = Function
+
+expression app_names =
+		let
+		    Source = Csv.Document(File.Contents(DataFolder & "\app_names.csv"), [Delimiter = ",", Encoding = 65001]),
+		    Headers = Table.PromoteHeaders(Source, [PromoteAllScalars = true])
+		in
+		    Headers
+	lineageTag: ea741579-cc65-4d25-9237-05bd2ec75b1e
+
+	annotation PBI_ResultType = Table
+
