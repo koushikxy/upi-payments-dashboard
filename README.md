@@ -49,6 +49,8 @@ There is one fact table (`upi_apps`: month, app, volume, value) and a monthly `C
 ## Files
 
 - `upi_dashboard.pbip`: open this in Power BI Desktop. The project is saved in PBIP format, so the model (`.SemanticModel`, TMDL) and report (`.Report`) are plain text and readable on GitHub.
+- `measures.dax`: all the DAX measures, the calculated column and the calendar table in one file.
+- `queries.pq`: the Power Query (M) code that combines the 76 monthly files.
 - `upi_dashboard.pdf`: the dashboard exported to PDF, if you don't have Power BI.
 - `upi_report.pdf`: a short write-up of the findings.
 - `data/`: the 76 monthly files and the app name mapping.

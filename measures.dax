@@ -1,0 +1,85 @@
+-- Calculated table: Calendar
+VAR first = CALCULATE ( MIN ( upi_apps[month] ), REMOVEFILTERS () )
+VAR months = DATEDIFF ( first, CALCULATE ( MAX ( upi_apps[month] ), REMOVEFILTERS () ), MONTH )
+RETURN
+    ADDCOLUMNS (
+        SELECTCOLUMNS ( GENERATESERIES ( 0, months ), "Date", EDATE ( first, [Value] ) ),
+        "Year", YEAR ( [Date] ),
+        "Month", FORMAT ( [Date], "MMM yy" ),
+        "MonthNo", YEAR ( [Date] ) * 100 + MONTH ( [Date] )
+    )
+
+-- Measure: upi_apps[Volume (Mn)]
+SUM ( upi_apps[volume_mn] )
+
+-- Measure: upi_apps[Value (Cr)]
+VAR missing =
+    CALCULATE ( COUNTROWS ( upi_apps ), ISBLANK ( upi_apps[value_cr] ), REMOVEFILTERS ( upi_apps[app], upi_apps[app_type], upi_apps[App Group] ) )
+RETURN
+    IF ( missing > 0, BLANK (), SUM ( upi_apps[value_cr] ) )
+
+-- Measure: upi_apps[Avg Ticket (₹)]
+DIVIDE ( [Value (Cr)] * 1e7, [Volume (Mn)] * 1e6 )
+
+-- Measure: upi_apps[Volume Share]
+DIVIDE ( [Volume (Mn)], CALCULATE ( [Volume (Mn)], REMOVEFILTERS ( upi_apps[app], upi_apps[app_type], upi_apps[App Group] ) ) )
+
+-- Measure: upi_apps[Volume YoY %]
+VAR d = MAX ( 'Calendar'[Date] )
+VAR prev =
+    CALCULATE ( [Volume (Mn)], REMOVEFILTERS ( 'Calendar' ), 'Calendar'[Date] = EDATE ( d, -12 ) )
+RETURN
+    DIVIDE ( [Volume (Mn)] - prev, prev )
+
+-- Measure: upi_apps[Top 2 Share]
+DIVIDE (
+    CALCULATE ( [Volume (Mn)], upi_apps[app] IN { "PhonePe", "Google Pay" } ),
+    CALCULATE ( [Volume (Mn)], REMOVEFILTERS ( upi_apps[app], upi_apps[app_type], upi_apps[App Group] ) )
+)
+
+-- Measure: upi_apps[HHI]
+SUMX ( VALUES ( upi_apps[app] ), ( [Volume Share] * 100 ) ^ 2 )
+
+-- Measure: upi_apps[Share Change 12M]
+VAR d = MAX ( 'Calendar'[Date] )
+RETURN
+    [Volume Share]
+        - CALCULATE ( [Volume Share], REMOVEFILTERS ( 'Calendar' ), 'Calendar'[Date] = EDATE ( d, -12 ) )
+
+-- Measure: upi_apps[Latest Volume (Bn)]
+VAR m = CALCULATE ( MAX ( upi_apps[month] ), REMOVEFILTERS () )
+RETURN
+    CALCULATE ( [Volume (Mn)], 'Calendar'[Date] = m ) / 1000
+
+-- Measure: upi_apps[Latest Value (₹ Lakh Cr)]
+VAR m = CALCULATE ( MAX ( upi_apps[month] ), REMOVEFILTERS () )
+RETURN
+    CALCULATE ( [Value (Cr)], 'Calendar'[Date] = m ) / 100000
+
+-- Measure: upi_apps[Latest Avg Ticket (₹)]
+VAR m = CALCULATE ( MAX ( upi_apps[month] ), REMOVEFILTERS () )
+RETURN
+    CALCULATE ( [Avg Ticket (₹)], 'Calendar'[Date] = m )
+
+-- Measure: upi_apps[Latest YoY %]
+VAR m = CALCULATE ( MAX ( upi_apps[month] ), REMOVEFILTERS () )
+RETURN
+    CALCULATE ( [Volume YoY %], 'Calendar'[Date] = m )
+
+-- Measure: upi_apps[Latest Volume (Mn)]
+VAR m = CALCULATE ( MAX ( upi_apps[month] ), REMOVEFILTERS () )
+RETURN
+    CALCULATE ( [Volume (Mn)], 'Calendar'[Date] = m )
+
+-- Measure: upi_apps[Latest Share]
+VAR m = CALCULATE ( MAX ( upi_apps[month] ), REMOVEFILTERS () )
+RETURN
+    CALCULATE ( [Volume Share], 'Calendar'[Date] = m )
+
+-- Measure: upi_apps[Latest Share Change]
+VAR m = CALCULATE ( MAX ( upi_apps[month] ), REMOVEFILTERS () )
+RETURN
+    CALCULATE ( [Share Change 12M], 'Calendar'[Date] = m )
+
+-- Calculated column: upi_apps[App Group]
+IF ( upi_apps[app] IN { "PhonePe", "Google Pay", "Paytm", "Navi" }, upi_apps[app], "Others" )
